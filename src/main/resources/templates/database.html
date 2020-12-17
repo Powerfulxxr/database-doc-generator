@@ -16,13 +16,16 @@
 
     <thead style="font-weight: bold;">
     <tr style="background-color: #b9c9fe;">
+        <td> 序号</td>
         <td> 名称</td>
         <td>备注</td>
     </tr>
     </thead>
     <tbody>
     <#list tables as item>
+    <#assign index=item_index+1>
     <tr style="background-color: #e8edff;">
+        <td>${index}</td>
         <td>${item.table}</td>
         <td>${item.comment!}</td>
     </tr>
