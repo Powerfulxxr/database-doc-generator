@@ -1,11 +1,14 @@
 package org.hackerandpainter.databasedocgenerator.database;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hackerandpainter.databasedocgenerator.bean.ColumnVo;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.SimpleDataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,20 +26,32 @@ public class PostgreSQL extends Generator {
             " WHERE c.relname = '@tablename' and a.attnum > 0 and a.attrelid = c.oid and a.atttypid = t.oid" +
             " ORDER BY a.attnum";
 
-    public PostgreSQL(String dbName, SimpleDataSource dataSource) {
-        super(dbName, dataSource);
+    public PostgreSQL(String dbName, SimpleDataSource dataSource, HttpServletRequest request) {
+        super(dbName, dataSource,request);
     }
 
     @Override
     public List<TableVo> getTableData() {
+        String tableName = this.request.getParameter("tableName");
         List<Record> list = getList(sqlTables);
         List<TableVo> tables = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            Record record = list.get(i);
-            String table = record.getString("name");
-            String comment =record.getString("comment");
-            TableVo tableVo = getTableInfo(table,comment);
-            tables.add(tableVo);
+        if (StringUtils.isNotBlank(tableName)) {
+            List<String> split = Arrays.asList(tableName.split(","));
+            list.stream().filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("name"))))
+                    .forEach(record->{
+                        String table = record.getString("name");
+                        String comment = record.getString("comment");
+                        TableVo tableVo = getTableInfo(table, comment);
+                        tables.add(tableVo);
+                    });
+        }else {
+            for (int i = 0; i < list.size(); i++) {
+                Record record = list.get(i);
+                String table = record.getString("name");
+                String comment = record.getString("comment");
+                TableVo tableVo = getTableInfo(table, comment);
+                tables.add(tableVo);
+            }
         }
         return tables;
     }

@@ -1,12 +1,16 @@
 package org.hackerandpainter.databasedocgenerator.database;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hackerandpainter.databasedocgenerator.bean.ColumnVo;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.SimpleDataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * DatabaseDocService
@@ -21,21 +25,24 @@ public class MySQL extends Generator {
             ".columns where table_schema = '@dbname'  and table_name " +
             "='@tablename'";
 
-    public MySQL(String dbName, SimpleDataSource dataSource) {
-        super(dbName, dataSource);
+    public MySQL(String dbName, SimpleDataSource dataSource, HttpServletRequest request) {
+        super(dbName, dataSource,request);
     }
 
     @Override
     public List<TableVo> getTableData() {
+        String tableName = this.request.getParameter("tableName");
         String sql = sqlTables.replace("@dbname", dbName);
         List<Record> list = getList(sql);
         List<TableVo> tables = new ArrayList<>();
-        list.parallelStream().forEach(record -> {
-            String table = record.getString("table_name");
-            String comment = record.getString("table_comment");
-            TableVo tableVo = getTableInfo(table, comment);
-            tables.add(tableVo);
-        });
+        if (StringUtils.isNotBlank(tableName)) {
+            List<String> split = Arrays.asList(tableName.split(","));
+            list.parallelStream()
+                    .filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("table_name"))))
+                    .forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
+        }else {
+            list.parallelStream().forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
+        }
         return tables;
     }
 

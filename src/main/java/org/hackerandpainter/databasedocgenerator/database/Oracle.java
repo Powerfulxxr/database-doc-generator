@@ -1,11 +1,14 @@
 package org.hackerandpainter.databasedocgenerator.database;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hackerandpainter.databasedocgenerator.bean.ColumnVo;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.SimpleDataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,20 +22,22 @@ public class Oracle  extends Generator{
     private String sqlColumns = "select column_name,data_type,data_length,nullable from user_tab_columns where " +
             "Table_Name='@tablename'";
     private String sqlColumnComments = "select column_name,comments from user_col_comments where TABLE_NAME='@tablename'";
-    public Oracle(String dbName, SimpleDataSource dataSource) {
-        super(dbName, dataSource);
+    public Oracle(String dbName, SimpleDataSource dataSource, HttpServletRequest request) {
+        super(dbName, dataSource,request);
     }
 
     @Override
     public List<TableVo> getTableData() {
+        String tableName = this.request.getParameter("tableName");
         List<Record> list = getList(sqlTables);
         List<TableVo> tables = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            Record record = list.get(i);
-            String table = record.getString("table_name");
-            String comment =record.getString("comments");
-            TableVo tableVo = getTableInfo(table,comment);
-            tables.add(tableVo);
+        if (StringUtils.isNotBlank(tableName)) {
+            List<String> split = Arrays.asList(tableName.split(","));
+            list.parallelStream()
+                    .filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("table_name"))))
+                    .forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
+        }else {
+            list.parallelStream().forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
         }
         return tables;
     }

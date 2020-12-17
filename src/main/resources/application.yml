@@ -16,7 +16,7 @@ swagger:
   # 描述
   description: "API 描述"
   # swagger扫描的基础包，默认：全扫描
-  base-package: "org"
+  base-package: "org.hackerandpainter.databasedocgenerator.controller"
   # 需要处理的基础URL规则，默认：/**
   base-path: /**
   # 需要排除的URL规则，默认：空
@@ -26,6 +26,7 @@ swagger:
 
 server:
   port: 9999
+  address: 127.0.0.1
   servlet:
     context-path: /generator
 spring:

@@ -14,8 +14,11 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * Generator
@@ -29,12 +32,15 @@ public abstract class Generator {
     protected Dao dao = null;
     protected String dbName;
     protected String docPath;
+    protected HttpServletRequest request;
 
-    public Generator(String dbName, SimpleDataSource dataSource) {
+    public Generator(String dbName, SimpleDataSource dataSource,HttpServletRequest request) {
         this.dataSource = dataSource;
         dao = new NutDao(dataSource);
         this.dbName = dbName;
         this.docPath = dbName + "-doc";
+        this.docPath = dbName + "-doc";
+        this.request = request;
     }
 
 
@@ -46,8 +52,10 @@ public abstract class Generator {
      * @return 返回文件存储地址
      */
     public String generateDoc() {
-        String home = System.getProperty("user.home");
-        savePath = home + "/" + UUID.fastUUID() + "/" + docPath;
+//        String home = System.getProperty("user.home");
+//        savePath = home + "/" + UUID.fastUUID() + "/" + docPath;
+        String path = this.request.getParameter("path");
+        savePath = path + "/数据库文档/" + docPath;
         File docDir = new File(savePath);
         if (docDir.exists()) {
             FileUtil.clean(docDir);
@@ -55,7 +63,8 @@ public abstract class Generator {
             docDir.mkdirs();
         }
         List<TableVo> list = getTableData();
-        save2File(list, savePath);
+        //生成md文件
+//        save2File(list, savePath);
         //保存word
         WordGenerator.createDoc(dbName, list, savePath);
         return savePath;
@@ -157,5 +166,14 @@ public abstract class Generator {
         dao.execute(sql);
         List<Record> list = sql.getList(Record.class);
         return list;
+    }
+
+    protected Consumer<Record> getRecordConsumer(List<TableVo> tables, BiFunction<String, String, TableVo> biFunction) {
+        return record -> {
+            String table = record.getString("table_name");
+            String comment = record.getString("table_comment");
+            TableVo tableVo = biFunction.apply(table, comment);
+            tables.add(tableVo);
+        };
     }
 }

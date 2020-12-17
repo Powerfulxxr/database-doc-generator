@@ -1,11 +1,14 @@
 package org.hackerandpainter.databasedocgenerator.database;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hackerandpainter.databasedocgenerator.bean.ColumnVo;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.SimpleDataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,20 +52,32 @@ public class SqlServer extends Generator {
             + "  ) IDX ON C.[object_id]=IDX.[object_id]\n" + "           AND C.column_id=IDX.column_id\n"
             + "WHERE O.name='@tablename' -- 如果只查询指定表,加上此条件\n" + "ORDER BY O.name,C.column_id";
 
-    public SqlServer(String dbName, SimpleDataSource dataSource) {
-        super(dbName, dataSource);
+    public SqlServer(String dbName, SimpleDataSource dataSource, HttpServletRequest request) {
+        super(dbName, dataSource,request);
     }
 
     @Override
     public List<TableVo> getTableData() {
+        String tableName = this.request.getParameter("tableName");
         List<Record> list = getList(sqlTables);
         List<TableVo> tables = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            Record record = list.get(i);
-            String table = record.getString("name");
-            String comment = record.getString("comment");
-            TableVo tableVo = getTableInfo(table, comment);
-            tables.add(tableVo);
+        if (StringUtils.isNotBlank(tableName)) {
+            List<String> split = Arrays.asList(tableName.split(","));
+            list.stream().filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("name"))))
+                    .forEach(record->{
+                        String table = record.getString("name");
+                        String comment = record.getString("comment");
+                        TableVo tableVo = getTableInfo(table, comment);
+                        tables.add(tableVo);
+                    });
+        }else {
+            for (int i = 0; i < list.size(); i++) {
+                Record record = list.get(i);
+                String table = record.getString("name");
+                String comment = record.getString("comment");
+                TableVo tableVo = getTableInfo(table, comment);
+                tables.add(tableVo);
+            }
         }
         return tables;
     }
