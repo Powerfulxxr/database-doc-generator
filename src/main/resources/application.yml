@@ -32,3 +32,6 @@ server:
 spring:
   freemarker:
     template-loader-path=classpath: /templates
+    cache: true
+    charset: utf-8
+    check-template-location: true

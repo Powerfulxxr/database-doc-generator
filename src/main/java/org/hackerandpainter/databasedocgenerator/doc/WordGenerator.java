@@ -1,13 +1,11 @@
 package org.hackerandpainter.databasedocgenerator.doc;
 
+import cn.hutool.poi.word.WordUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.hackerandpainter.databasedocgenerator.bean.ColumnVo;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
 
 import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ import java.util.Map;
 public class WordGenerator {
     private static Configuration configuration = null;
 
-    static {
+    /*static {
         configuration = new Configuration();
         configuration.setDefaultEncoding("utf-8");
         try {
@@ -31,7 +29,7 @@ public class WordGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private WordGenerator() {
         throw new AssertionError();
@@ -42,6 +40,15 @@ public class WordGenerator {
         map.put("dbName", dbName);
         map.put("tables", list);
         try {
+            configuration = new Configuration();
+            configuration.setDefaultEncoding("utf-8");
+            try {
+//                URL url = Thread.currentThread().getContextClassLoader().getResource("./");
+//                File file = new File(url.getPath());
+                configuration.setClassForTemplateLoading(WordUtil.class,"/");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Template template = configuration.getTemplate("templates/database.html");
             String name =  File.separator + dbName + ".html";
             File f = new File(savePath + name);
