@@ -30,7 +30,7 @@ public class IndexController {
     @GetMapping("/generator")
     @ApiImplicitParams({
             @ApiImplicitParam(name="dbType", value = "0.数据库方言\n1:MySQL\n2:Oracle\n3:PostgreSQL\n4:SQLServer", defaultValue = "1",allowableValues = "1,2,3,4",required = true,collectionFormat = "1"),
-            @ApiImplicitParam(name = "ip", value = "1.ip地址", defaultValue = "localhost", required = true),
+            @ApiImplicitParam(name = "ip", value = "1.ip地址", defaultValue = "127.0.0.1", required = true),
             @ApiImplicitParam(name = "databaseName", value = "2.数据库名", required = true),
             @ApiImplicitParam(name = "port", value = "3.端口", defaultValue = "3306", required = true),
             @ApiImplicitParam(name = "userName", value = "4.用户名", defaultValue = "root", required = true),
@@ -41,7 +41,7 @@ public class IndexController {
             @ApiImplicitParam(name = "path", value = "8.文档生成路径", required =true )
     })
     public String generatorDatabaseDoc(HttpServletResponse response, String dbType,
-                                       @RequestParam(defaultValue = "localhost") String ip,
+                                       @RequestParam(defaultValue = "127.0.0.1") String ip,
                                        String databaseName,
                                        @RequestParam(defaultValue = "3306") String port,
                                        @RequestParam(defaultValue = "postgres") String userName,
