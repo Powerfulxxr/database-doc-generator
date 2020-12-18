@@ -32,7 +32,7 @@ public class PostgreSQL extends Generator {
 
     @Override
     public List<TableVo> getTableData() {
-        String tableName = this.request.getParameter("tableName");
+        String tableName =AssertNUll(request.getAttribute("tableName"));
         List<Record> list = getList(sqlTables);
         List<TableVo> tables = new ArrayList<>();
         if (StringUtils.isNotBlank(tableName)) {

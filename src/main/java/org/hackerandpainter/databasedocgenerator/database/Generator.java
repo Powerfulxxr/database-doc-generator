@@ -17,6 +17,7 @@ import org.nutz.lang.Strings;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -54,7 +55,7 @@ public abstract class Generator {
     public String generateDoc() {
 //        String home = System.getProperty("user.home");
 //        savePath = home + "/" + UUID.fastUUID() + "/" + docPath;
-        String path = this.request.getParameter("path");
+        String path = this.request.getAttribute("path") + "";
         savePath = path + "/数据库文档/" + docPath;
         File docDir = new File(savePath);
         if (docDir.exists()) {
@@ -175,5 +176,9 @@ public abstract class Generator {
             TableVo tableVo = biFunction.apply(table, comment);
             tables.add(tableVo);
         };
+    }
+
+    protected String AssertNUll(Object object){
+        return Objects.isNull(object) ? null : object + "";
     }
 }

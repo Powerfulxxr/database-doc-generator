@@ -31,7 +31,7 @@ public class MySQL extends Generator {
 
     @Override
     public List<TableVo> getTableData() {
-        String tableName = this.request.getParameter("tableName");
+        String tableName =AssertNUll(request.getAttribute("tableName"));
         String sql = sqlTables.replace("@dbname", dbName);
         List<Record> list = getList(sql);
         List<TableVo> tables = new ArrayList<>();

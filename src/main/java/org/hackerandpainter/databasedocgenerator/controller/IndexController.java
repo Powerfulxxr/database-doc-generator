@@ -1,11 +1,10 @@
 package org.hackerandpainter.databasedocgenerator.controller;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.io.file.FileReader;
+
 import cn.hutool.core.util.ZipUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import org.apache.commons.lang3.StringUtils;
 import org.hackerandpainter.databasedocgenerator.database.*;
 import org.nutz.dao.impl.SimpleDataSource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class IndexController {
             @ApiImplicitParam(name = "tableName", value = "6数据库表名(多个表需英文逗号分开,空值表示生成所有表)"),
             @ApiImplicitParam(name="isZip", value = "7.是否压缩", defaultValue = "否",allowableValues = "否,是",required = true,collectionFormat = "1"),
             @ApiImplicitParam(name = "serviceName", value = "8.Oracle数据库才需要", required = false),
-            @ApiImplicitParam(name = "path", value = "8.文档生成路径", required =true )
+            @ApiImplicitParam(name = "path", value = "8.文档生成路径(默认生成到本地桌面)", required =false )
     })
     public String generatorDatabaseDoc(HttpServletResponse response, String dbType,
                                        @RequestParam(defaultValue = "127.0.0.1") String ip,
@@ -49,10 +48,15 @@ public class IndexController {
                                        String tableName,
                                        @RequestParam(defaultValue = "否") String isZip,
                                        @RequestParam(required = false) String serviceName,
-                                       String path) throws Exception {
+                                       @RequestParam(required = false)String path) throws Exception {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         request.setAttribute("tableName", tableName);
-        request.setAttribute("path", path);
+        if(StringUtils.isNotBlank(path)) {
+            request.setAttribute("path", path);
+        }else{
+            String home = System.getProperty("user.home");
+            request.setAttribute("path", home + "\\Desktop\\");
+        }
         if ("c".equals(dbType)) {
             System.exit(-1);
         }
