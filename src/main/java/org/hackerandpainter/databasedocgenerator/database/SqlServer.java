@@ -63,21 +63,10 @@ public class SqlServer extends Generator {
         List<TableVo> tables = new ArrayList<>();
         if (StringUtils.isNotBlank(tableName)) {
             List<String> split = Arrays.asList(tableName.split(","));
-            list.stream().filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("name"))))
-                    .forEach(record->{
-                        String table = record.getString("name");
-                        String comment = record.getString("comment");
-                        TableVo tableVo = getTableInfo(table, comment);
-                        tables.add(tableVo);
-                    });
+            list.parallelStream().filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("name"))))
+                    .forEach(getRecordConsumer("name","comment",tables,(table, comment) -> getTableInfo(table,comment)));
         }else {
-            for (int i = 0; i < list.size(); i++) {
-                Record record = list.get(i);
-                String table = record.getString("name");
-                String comment = record.getString("comment");
-                TableVo tableVo = getTableInfo(table, comment);
-                tables.add(tableVo);
-            }
+            list.parallelStream().forEach(getRecordConsumer("name","comment",tables,(table, comment) -> getTableInfo(table,comment)));
         }
         return tables;
     }

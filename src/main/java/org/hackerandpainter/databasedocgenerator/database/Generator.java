@@ -169,10 +169,13 @@ public abstract class Generator {
         return list;
     }
 
-    protected Consumer<Record> getRecordConsumer(List<TableVo> tables, BiFunction<String, String, TableVo> biFunction) {
+    protected Consumer<Record> getRecordConsumer(String key1
+            , String key2
+            , List<TableVo> tables
+            , BiFunction<String, String, TableVo> biFunction) {
         return record -> {
-            String table = record.getString("table_name");
-            String comment = record.getString("table_comment");
+            String table = record.getString(key1);
+            String comment = record.getString(key2);
             TableVo tableVo = biFunction.apply(table, comment);
             tables.add(tableVo);
         };

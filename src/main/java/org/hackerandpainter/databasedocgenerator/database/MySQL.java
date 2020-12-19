@@ -39,9 +39,9 @@ public class MySQL extends Generator {
             List<String> split = Arrays.asList(tableName.split(","));
             list.parallelStream()
                     .filter(x->split.stream().anyMatch(xx->xx.equals(x.getString("table_name"))))
-                    .forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
+                    .forEach(getRecordConsumer("table_name","table_comment",tables,(table, comment) -> getTableInfo(table,comment)));
         }else {
-            list.parallelStream().forEach(getRecordConsumer(tables,(table, comment) -> getTableInfo(table,comment)));
+            list.parallelStream().forEach(getRecordConsumer("table_name","table_comment",tables,(table, comment) -> getTableInfo(table,comment)));
         }
         return tables;
     }
