@@ -34,7 +34,7 @@ public class IndexController {
             @ApiImplicitParam(name = "port", value = "3.端口", defaultValue = "3306", required = true),
             @ApiImplicitParam(name = "userName", value = "4.用户名", defaultValue = "root", required = true),
             @ApiImplicitParam(name = "password", value = "5.密码", defaultValue = "root", required = true),
-            @ApiImplicitParam(name = "tableName", value = "6数据库表名(多个表需英文逗号分开,空值表示生成所有表)"),
+            @ApiImplicitParam(name = "tableName", value = "6.数据库表名(多个表需英文逗号分开,空值表示生成所有表)"),
             @ApiImplicitParam(name="isZip", value = "7.是否压缩", defaultValue = "否",allowableValues = "否,是",required = true,collectionFormat = "1"),
             @ApiImplicitParam(name = "serviceName", value = "8.Oracle数据库才需要", required = false),
             @ApiImplicitParam(name = "path", value = "8.文档生成路径(默认生成到本地桌面)", required =false )
