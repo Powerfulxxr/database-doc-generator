@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author xxr12
  */
 @Component
-@PropertySource("classpath:application-system.properties")
+@PropertySource("classpath:application-common.properties")
 @ConfigurationProperties(prefix = "shelf")
 public class TemplateConfig {
 
