@@ -1,23 +1,21 @@
 package org.hackerandpainter.databasedocgenerator.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 
 /**
  * 如果自定义配置文件需要外部化配置，参考此类。
- * 如果不外部化 @PropertySource() 和 @ConfigurationProperties() 配合使用classpath下的自定义文件没有问题。
- * @Component
- * @PropertySource("classpath:application-system.properties")
- * @ConfigurationProperties(prefix = "shelf")
+ * 定义配置文件文件命名按application-xxxx.properties
+ * spring.profiles.include=xxxx
  * @author xxr12
  */
-@Slf4j
-@Configuration("systemProperties")
+@Component
+@PropertySource("classpath:application-system.properties")
+@ConfigurationProperties(prefix = "shelf")
 public class TemplateConfig {
 
-    @Value("${shelf.template}")
     private String template;
 
     public String getTemplate() {
