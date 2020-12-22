@@ -6,6 +6,8 @@ server:
 spring:
   profiles:
     active: prod
+    # 自定义配置文件需要外部化配置
+    include: system
   freemarker:
     template-loader-path=classpath: /templates
     cache: false
