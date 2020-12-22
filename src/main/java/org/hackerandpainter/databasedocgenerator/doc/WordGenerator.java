@@ -4,6 +4,8 @@ import cn.hutool.poi.word.WordUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.hackerandpainter.databasedocgenerator.bean.TableVo;
+import org.hackerandpainter.databasedocgenerator.unitl.SpringContextUtil;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.io.*;
 import java.util.HashMap;
@@ -17,19 +19,6 @@ import java.util.Map;
  * @version 2019/1/12 0012
  */
 public class WordGenerator {
-    private static Configuration configuration = null;
-
-    /*static {
-        configuration = new Configuration();
-        configuration.setDefaultEncoding("utf-8");
-        try {
-            URL url = Thread.currentThread().getContextClassLoader().getResource("./");
-            File file = new File(url.getPath());
-            configuration.setDirectoryForTemplateLoading(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     private WordGenerator() {
         throw new AssertionError();
@@ -40,15 +29,9 @@ public class WordGenerator {
         map.put("dbName", dbName);
         map.put("tables", list);
         try {
-            configuration = new Configuration();
+            Configuration configuration = SpringContextUtil.getBean(FreeMarkerConfigurer.class).getConfiguration();
             configuration.setDefaultEncoding("utf-8");
-            try {
-//                URL url = Thread.currentThread().getContextClassLoader().getResource("./");
-//                File file = new File(url.getPath());
-                configuration.setClassForTemplateLoading(WordUtil.class,"/");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            configuration.setClassForTemplateLoading(WordUtil.class,"/");
             Template template = configuration.getTemplate("templates/database.html");
             String name =  File.separator + dbName + ".html";
             File f = new File(savePath + name);

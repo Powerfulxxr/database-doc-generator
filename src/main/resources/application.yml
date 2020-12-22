@@ -8,9 +8,14 @@ spring:
     active: prod
   freemarker:
     template-loader-path=classpath: /templates
-    cache: true
+    cache: false
     charset: utf-8
     check-template-location: true
+    # 设置模板后缀名
+    suffix: .html
+    # 设置文档类型
+    content-type: text/html
+    prefer-file-system-access: false
 
 
 
