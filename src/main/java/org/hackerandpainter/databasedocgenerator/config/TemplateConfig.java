@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 如果自定义配置文件需要外部化配置，参考此类。
  * 如果不外部化 @PropertySource() 和 @ConfigurationProperties() 配合使用classpath下的自定义文件没有问题。
+ * @Component
+ * @PropertySource("classpath:application-system.properties")
+ * @ConfigurationProperties(prefix = "shelf")
  * @author xxr12
  */
 @Slf4j
