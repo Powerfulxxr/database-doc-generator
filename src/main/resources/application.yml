@@ -26,7 +26,7 @@ swagger:
   # 是否启用swagger，默认：true
   enabled: true
   # 标题
-  title: "Spring Boot 实现数据库文档生成"
+  title: "数据库文档生成API"
   contact:
     # 维护人
     name: "xxr"
