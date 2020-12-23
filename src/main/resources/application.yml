@@ -5,7 +5,7 @@ server:
     context-path: /generator
 spring:
   profiles:
-    active: prod
+    active: window
     # 自定义配置文件需要外部化配置
     include: common
   freemarker:
