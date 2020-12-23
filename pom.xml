@@ -128,6 +128,36 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--   需要让Maven在打包时能将application.properties进行过滤处理，同时替换掉变量     -->
+        <!--   如果你的项目pom定义继承自 spring-boot-starter-parent，那么可以不需要配置这个filter     -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
-
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>window</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>window</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 </project>
